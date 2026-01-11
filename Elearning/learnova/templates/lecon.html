@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="site-header d-flex flex-column justify-content-center align-items-center">
+    <div class="container">
+        <h2 class="text-white">{{ lecon.titre }}</h2>
+        <p class="text-white">Module : {{ lecon.module.titre }}</p>
+    </div>
+</header>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-12">
+                
+                <div class="custom-block bg-white shadow-lg p-5">
+                    
+                    {% if lecon.video_url %}
+                    <div class="ratio ratio-16x9 mb-4">
+                        <iframe src="{{ lecon.video_url }}" allowfullscreen></iframe>
+                    </div>
+                    {% endif %}
+
+                    <div class="content">
+                        {{ lecon.contenu|safe }}
+                    </div>
+
+                    <hr class="my-5">
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'detail_cours' lecon.module.cours.id %}" class="btn btn-secondary">Retour au programme</a>
+                        
+                        {# Si il y a une évaluation liée au module #}
+                        {% if lecon.module.evaluation %}
+                            <a href="#" class="btn btn-primary">Passer l'évaluation du module</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

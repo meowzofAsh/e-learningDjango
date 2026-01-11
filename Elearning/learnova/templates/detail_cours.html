@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<header class="site-header d-flex flex-column justify-content-center align-items-center">
+    <div class="container">
+        <h2 class="text-white">{{ cours.titre }}</h2>
+        <p class="text-white">{{ modules.count }} Modules disponibles</p>
+    </div>
+</header>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 col-12 mx-auto">
+                <h3 class="mb-4 text-center">Contenu de la formation</h3>
+
+                <div class="accordion" id="accordionModules">
+                    {% for module in modules %}
+                    <div class="accordion-item shadow-sm mb-3 border-0">
+                        
+                        <h2 class="accordion-header" id="heading{{ module.id }}">
+                            <button class="accordion-button collapsed py-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ module.id }}" aria-expanded="false" aria-controls="collapse{{ module.id }}">
+                                <div class="d-flex align-items-center w-100">
+                                    <span class="badge bg-primary me-3">{{ forloop.counter }}</span>
+                                    <h5 class="mb-0" style="font-size: 1.1rem;">{{ module.titre }}</h5>
+                                </div>
+                            </button>
+                        </h2>
+
+                        <div id="collapse{{ module.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ module.id }}" data-bs-parent="#accordionModules">
+                            <div class="accordion-body bg-light">
+                                <ul class="list-group list-group-flush">
+                                    {% for lecon in module.lecons.all %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi-play-circle-fill me-3 text-primary" style="font-size: 1.2rem;"></i>
+                                            <a href="{% url 'afficher_lecon' lecon.id %}" class="text-dark fw-bold text-decoration-none">
+                                                {{ lecon.titre }}
+                                            </a>
+                                        </div>
+                                        <span class="text-muted small">Leçon</span>
+                                    </li>
+                                    {% empty %}
+                                    <li class="list-group-item bg-transparent border-0 text-muted">
+                                        Aucune leçon disponible dans ce module.
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+
+                                {% if module.evaluation %}
+                                <div class="p-3 mt-2 border-top text-center">
+                                    <a href="{% url 'faire_evaluation' module.id %}" class="btn btn-warning btn-sm rounded-pill">
+                                        <i class="bi-pencil-square me-2"></i>Passer l'évaluation du module
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center p-5 bg-white rounded shadow-sm">
+                        <p class="text-muted">Aucun module n'a encore été ajouté à ce cours.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Personnalisation de l'accordéon */
+    .accordion-button:not(.collapsed) {
+        background-color: #f0f8ff;
+        color: #3d5af1;
+        box-shadow: none;
+    }
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: rgba(0,0,0,.125);
+    }
+    .list-group-item:hover {
+        background-color: #fff !important;
+        transform: translateX(10px);
+        transition: 0.3s;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<header class="site-header d-flex flex-column justify-content-center align-items-center">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-5 col-12">
+                <h2 class="text-white">Nos Formations</h2>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h3 class="mb-4">Découvrez nos derniers cours</h3>
+            </div>
+
+            {% for cours in cours_liste %}
+            <div class="col-lg-4 col-md-6 col-12 mb-4">
+                <div class="custom-block bg-white shadow-lg">
+                    <a href="{% url 'detail_cours' cours.id %}">
+                        <div class="d-flex">
+                            <div>
+                                <h5 class="mb-2">{{ cours.titre }}</h5>
+                                <p class="mb-0 text-muted">{{ cours.description|truncatewords:12 }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            {% if cours.image %}
+                                <img src="{{ cours.image.url }}" class="custom-block-image img-fluid" alt="{{ cours.titre }}" style="border-radius: 20px; height: 200px; width: 100%; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'images/placeholder.png' %}" class="custom-block-image img-fluid" alt="Défaut" style="border-radius: 20px; height: 200px; width: 100%; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                    </a>
+                    
+                    <div class="mt-3 text-center pb-3">
+                        <a href="{% url 'detail_cours' cours.id %}" class="btn btn-outline-primary btn-sm w-100">Voir le programme</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>Aucun cours n'est encore disponible. Ajoutez-en dans l'admin !</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock content %}

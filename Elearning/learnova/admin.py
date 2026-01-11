@@ -1,32 +1,46 @@
 from django.contrib import admin
-from .models import Profil, Cours, Module, Lecon, Inscription, Progression, Evaluation
+from .models import Profil, Cours, Module, Lecon, Evaluation, ResultatEvaluation, Inscription, Progression
 
-# Permet d'ajouter des leçons directement dans la page d'un Module
+# --- Gestion des Leçons à l'intérieur des Modules ---
 class LeconInline(admin.TabularInline):
     model = Lecon
-    extra = 1 # Affiche une ligne vide pour ajouter une leçon rapidement
+    extra = 1  # Permet d'ajouter une leçon vide directement depuis le module
 
-# Permet d'ajouter des modules directement dans la page d'un Cours
-class ModuleInline(admin.TabularInline):
+# --- Gestion des Modules à l'intérieur des Cours ---
+class ModuleInline(admin.StackedInline):
     model = Module
     extra = 1
 
+# --- Configuration de l'affichage du Profil ---
+@admin.register(Profil)
+class ProfilAdmin(admin.ModelAdmin):
+    list_display = ('utilisateur', 'get_cours_count')
+    search_fields = ('utilisateur__username',)
+
+    def get_cours_count(self, obj):
+        return obj.cours_suivis.count()
+    get_cours_count.short_description = "Nombre de cours suivis"
+
+# --- Configuration du Cours ---
 @admin.register(Cours)
 class CoursAdmin(admin.ModelAdmin):
-    list_display = ('titre', 'date_creation') # Colonnes affichées dans la liste
-    search_fields = ('titre',) # Barre de recherche par titre
-    inlines = [ModuleInline]
+    list_display = ('titre',)
+    search_fields = ('titre',)
+    inlines = [ModuleInline] # On peut créer les modules direct dans le cours
 
+# --- Configuration du Module ---
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
     list_display = ('titre', 'cours', 'ordre')
-    list_filter = ('cours',) # Filtre sur le côté pour trier par cours
-    inlines = [LeconInline]
+    list_filter = ('cours',)
+    inlines = [LeconInline] # On peut créer les leçons direct dans le module
 
+# --- Configuration de la Leçon ---
 @admin.register(Lecon)
 class LeconAdmin(admin.ModelAdmin):
-    list_display = ('titre', 'module', 'ordre')
-    list_filter = ('module__cours',) # Filtre par cours pour trouver une leçon
+    list_display = ('titre', 'module')
+    list_filter = ('module__cours', 'module')
+
 
 @admin.register(Inscription)
 class InscriptionAdmin(admin.ModelAdmin):
@@ -38,10 +52,37 @@ class ProgressionAdmin(admin.ModelAdmin):
     list_display = ('etudiant', 'lecon', 'termine', 'date_fin')
     list_filter = ('termine', 'etudiant')
 
-@admin.register(Profil)
-class ProfilAdmin(admin.ModelAdmin):
-    list_display = ('utilisateur', 'telephone')
-
 @admin.register(Evaluation)
 class EvaluationAdmin(admin.ModelAdmin):
     list_display = ('titre', 'module')
+
+@admin.register(ResultatEvaluation)
+class ResultatEvaluationAdmin(admin.ModelAdmin):
+    list_display = ('etudiant', 'evaluation', 'note', 'date_passage')
+    list_filter = ('evaluation', 'date_passage')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

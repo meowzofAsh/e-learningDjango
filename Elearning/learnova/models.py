@@ -1,14 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# vpour étendre les informations de l'utilisateur (Dashboard)
-class Profil(models.Model):
-    utilisateur = models.OneToOneField(User, on_delete=models.CASCADE)
-    telephone = models.CharField(max_length=20, blank=True)
-
-    def __str__(self):
-        return f"Profil de {self.utilisateur.username}"
-
 # Modèle pour les Cours
 class Cours(models.Model):
     titre = models.CharField(max_length=200)
@@ -62,3 +54,20 @@ class Evaluation(models.Model):
 
     def __str__(self):
         return self.titre
+    
+
+class Profil(models.Model):
+    utilisateur = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profils/', blank=True)
+    # Relation vers les cours suivis
+    cours_suivis = models.ManyToManyField(Cours, blank=True, related_name='etudiants')
+    
+    def __str__(self):
+        return f"Profil de {self.utilisateur.username}"
+
+# Nouveau modèle pour enregistrer les notes aux évaluations
+class ResultatEvaluation(models.Model):
+    etudiant = models.ForeignKey(User, on_delete=models.CASCADE)
+    evaluation = models.ForeignKey(Evaluation, on_delete=models.CASCADE)
+    note = models.FloatField()
+    date_passage = models.DateTimeField(auto_now_add=True)

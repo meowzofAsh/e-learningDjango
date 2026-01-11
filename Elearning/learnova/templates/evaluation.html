@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="site-header d-flex flex-column justify-content-center align-items-center">
+    <div class="container">
+        <h2 class="text-white">Évaluation : {{ module.titre }}</h2>
+    </div>
+</header>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-12">
+                <form method="post" class="custom-block bg-white shadow-lg p-5">
+                    {% csrf_token %}
+                    
+                    {% for question in questions %}
+                    <div class="mb-5">
+                        <h5 class="mb-3">{{ forloop.counter }}. {{ question.texte }}</h5>
+                        
+                        {# On suppose que tu as un modèle Choix lié à Question #}
+                        {% for choix in question.choix.all %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="choix_{{ choix.id }}" value="{{ choix.id }}" required>
+                            <label class="form-check-label" for="choix_{{ choix.id }}">
+                                {{ choix.texte }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary w-100 mt-4">Valider mes réponses</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
